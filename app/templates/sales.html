@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% block content %}
+<h1>💰 売上</h1>
+<h2>売上を追加</h2>
+<form method="post" action="/sales/add" class="form-row">
+  <input type="date" name="date" required>
+  <select name="customer_id" required>
+    <option value="">顧客を選択</option>
+    {% for c in customers %}<option value="{{ c['id'] }}">{{ c['name'] }}</option>{% endfor %}
+  </select>
+  <select name="cast_id" required>
+    <option value="">キャストを選択</option>
+    {% for c in casts %}<option value="{{ c['id'] }}">{{ c['name'] }}</option>{% endfor %}
+  </select>
+  <input type="number" name="amount" placeholder="売上(¥)" min="1" required>
+  <button type="submit" class="primary">登録</button>
+</form>
+<h2>売上一覧</h2>
+<table class="table"><thead><tr><th>日付</th><th>顧客</th><th>キャスト</th><th>売上</th></tr></thead><tbody>
+{% for s in sales %}
+<tr><td>{{ s["date"] }}</td><td>{{ s["customer"] }}</td><td>{{ s["cast"] }}</td><td>¥{{ "{:,}".format(s["amount"]) }}</td></tr>
+{% endfor %}
+</tbody></table>
+{% endblock %}

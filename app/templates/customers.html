@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block content %}
+<h1>🧍 顧客</h1>
+<form method="get"><input type="text" name="q" placeholder="顧客名検索" value="{{ q }}"><button>検索</button></form>
+<div class="grid">
+{% for r in rows %}
+  <div class="card">
+    <div class="card-title">{{ r["name"] }}</div>
+    <div class="muted">誕生日: {{ r["birthday"] or "-" }} / 年齢: {{ r["age"] or "-" }}</div>
+    <div>初回来店: {{ r["first_visit"] or "-" }}</div>
+    <div>来店回数: {{ r["visit_count"] or 0 }}</div>
+    <div>平均単価: ¥{{ "{:,.0f}".format(r["avg_amount"] or 0) }}</div>
+    <div>累計売上: ¥{{ "{:,}".format(r["total_amount"] or 0) }}</div>
+  </div>
+{% endfor %}
+</div>
+<h2>顧客を追加</h2>
+<form method="post" action="/customers/add" class="form-row">
+  <input type="text" name="name" placeholder="顧客名" required>
+  <input type="date" name="birthday" placeholder="誕生日">
+  <button type="submit" class="primary">追加</button>
+</form>
+{% endblock %}

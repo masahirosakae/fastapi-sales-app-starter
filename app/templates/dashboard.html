@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>📊 ダッシュボード</h1>
+
+<form method="get" class="form-row" style="align-items:center;gap:8px">
+  <label>開始月:
+    <select name="start">
+      <option value="">（指定なし）</option>
+      {% for m in month_list %}
+        <option value="{{ m }}" {% if start==m %}selected{% endif %}>{{ m }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>終了月:
+    <select name="end">
+      <option value="">（指定なし）</option>
+      {% for m in month_list %}
+        <option value="{{ m }}" {% if end==m %}selected{% endif %}>{{ m }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <button type="submit" class="primary">適用</button>
+  {% if start or end %}
+    <span class="muted">適用中: {{ start or "最初" }} 〜 {{ end or "最新" }}</span>
+    <a href="/" style="margin-left:8px">リセット</a>
+  {% endif %}
+</form>
+
+<div class="cards">
+  <div class="card">
+    <div class="kpi-label">総売上（期間内）</div>
+    <div class="kpi-value">¥{{ "{:,}".format(total_sales) }}</div>
+  </div>
+</div>
+
+<h2>月次売上推移</h2>
+<canvas id="monthlyChart"></canvas>
+
+<h2>キャスト別 売上合計（ランキング）</h2>
+<canvas id="castChart"></canvas>
+
+<h2>優良顧客マップ（来店回数 × 平均単価）</h2>
+<canvas id="customerScatter"></canvas>
+
+<script>
+const monthly = {{ monthly_json | safe }};
+const labelsM = monthly.map(x=>x.ym);
+const dataM = monthly.map(x=>x.total);
+new Chart(document.getElementById('monthlyChart'), {
+  type: 'line',
+  data: { labels: labelsM, datasets: [{ label: '月次売上', data: dataM }]},
+});
+
+const cast = {{ cast_json | safe }};
+new Chart(document.getElementById('castChart'), {
+  type: 'bar',
+  data: { labels: cast.map(x=>x.cast), datasets: [{ label: '売上合計', data: cast.map(x=>x.total) }]},
+});
+
+const customers = {{ customers_json | safe }};
+const scatterData = customers.map(c => ({
+  x: c.visits,
+  y: Math.round(c.avg_amount || 0),
+  label: c.name,
+  total: c.total_amount
+}));
+
+new Chart(document.getElementById('customerScatter'), {
+  type: 'scatter',
+  data: {
+    datasets: [{
+      label: '顧客',
+      data: scatterData,
+      pointRadius: 4
+    }]
+  },
+  options: {
+    scales: {
+      x: { title: { display: true, text: '来店回数（期間内）' }, ticks: { precision: 0 } },
+      y: { title: { display: true, text: '平均単価（¥）' } }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (ctx) => {
+            const d = ctx.raw;
+            const yen = (n) => '¥' + (n||0).toLocaleString();
+            return `${d.label}: 来店${d.x}回 / 平均 ${yen(d.y)} / 合計 ${yen(d.total)}`;
+          }
+        }
+      }
+    }
+  }
+});
+</script>
+{% endblock %}
+

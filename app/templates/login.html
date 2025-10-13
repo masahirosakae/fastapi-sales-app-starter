@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>🔐 ログイン</h1>
+<form method="post" action="/login" class="form-row" style="max-width:480px">
+  <input type="hidden" name="next" value="{{ next }}">
+  <input type="text" name="username" placeholder="ユーザー名" required>
+  <input type="password" name="password" placeholder="パスワード" required>
+  <button type="submit" class="primary">ログイン</button>
+</form>
+{% if error %}
+  <div class="card" style="border-color:#b23a3a;color:#ffdddd;background:#2a1414">{{ error }}</div>
+{% endif %}
+{% endblock %}
+

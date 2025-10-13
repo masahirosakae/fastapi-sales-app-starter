@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block content %}
+<h1>💃 キャスト</h1>
+<div class="grid">{% for r in rows %}
+  <div class="card"><div class="card-title">{{ r["name"] }}</div><div>入店年: {{ r["joined_year"] or "-" }}</div></div>
+{% endfor %}</div>
+<h2>キャストを追加</h2>
+<form method="post" action="/casts/add" class="form-row">
+  <input type="text" name="name" placeholder="キャスト名" required>
+  <input type="number" name="joined_year" placeholder="入店年">
+  <button type="submit" class="primary">追加</button>
+</form>
+{% endblock %}
