@@ -14,6 +14,8 @@ APP_DIR = os.path.dirname(__file__)
 SCHEMA = os.path.join(APP_DIR, "schema.sql")
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-me")
 DB_URL = os.getenv("DATABASE_URL", os.path.join(APP_DIR, "app.db"))
+ADMIN_USER = os.getenv("ADMIN_USER", "admin")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
 
 
 def get_db():
@@ -47,6 +49,23 @@ def init_db_if_needed():
     conn = get_db()
     with open(os.path.join(APP_DIR, "schema.sql"), "r", encoding="utf-8") as f:
         conn.executescript(f.read())
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      role TEXT DEFAULT 'admin'
+    );
+    """)
+
+    cnt = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+    if cnt == 0:
+        conn.execute(
+            "INSERT INTO users(username, password_hash, role) VALUES (?,?,?)",
+            (ADMIN_USER, hasher.hash(ADMIN_PASSWORD), "admin")
+        )
+        print(f"[INIT] admin user created: {ADMIN_USER} / (password set from env)")
+
     conn.commit(); conn.close()
 
 init_db_if_needed()
