@@ -15,7 +15,7 @@ SCHEMA = os.path.join(APP_DIR, "schema.sql")
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-me")
 DB_URL = os.getenv("DATABASE_URL", os.path.join(APP_DIR, "app.db"))
 ADMIN_USER = os.getenv("ADMIN_USER", "admin")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 
 def get_db():
@@ -60,11 +60,14 @@ def init_db_if_needed():
 
     cnt = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
     if cnt == 0:
-        conn.execute(
-            "INSERT INTO users(username, password_hash, role) VALUES (?,?,?)",
-            (ADMIN_USER, hasher.hash(ADMIN_PASSWORD), "admin")
-        )
-        print(f"[INIT] admin user created: {ADMIN_USER} / (password set from env)")
+        if ADMIN_PASSWORD:
+            conn.execute(
+                "INSERT INTO users(username, password_hash, role) VALUES (?,?,?)",
+                (ADMIN_USER, hasher.hash(ADMIN_PASSWORD), "admin")
+            )
+            print(f"[INIT] admin user created: {ADMIN_USER} / (password set from env)")
+        else:
+            print("[INIT] no admin user created. Set ADMIN_PASSWORD or run app/reset_admin.py.")
 
     conn.commit(); conn.close()
 

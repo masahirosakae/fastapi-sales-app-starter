@@ -1,5 +1,8 @@
+from getpass import getpass
+import os
+import sqlite3
+
 from passlib.hash import pbkdf2_sha256 as hasher
-import sqlite3, os
 
 DB = os.path.join("app", "app.db")
 os.makedirs("app", exist_ok=True)
@@ -14,8 +17,18 @@ CREATE TABLE IF NOT EXISTS users (
 )
 """)
 
-username = "admin"
-password = "admin123"
+username = os.getenv("ADMIN_USER", "admin")
+password = os.getenv("ADMIN_PASSWORD")
+
+if not password:
+    password = getpass("New admin password: ")
+    confirm = getpass("Confirm admin password: ")
+    if password != confirm:
+        raise SystemExit("Passwords do not match.")
+
+if not password:
+    raise SystemExit("Admin password is required.")
+
 pw = hasher.hash(password)
 
 conn.execute("""
@@ -26,4 +39,4 @@ DO UPDATE SET password_hash=excluded.password_hash, role=excluded.role
 """, (username, pw, "admin"))
 
 conn.commit(); conn.close()
-print("Admin user is ready: username=admin / password=admin123")
+print(f"Admin user is ready: username={username}")
