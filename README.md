@@ -63,15 +63,17 @@ print("DB ready")
 PY
 ```
 
-Set an admin password before the first run:
+Set admin credentials before the first run:
 
 ```bash
+export ADMIN_USERNAME="replace-with-your-local-username"
 export ADMIN_PASSWORD="replace-with-your-local-password"
 ```
 
 On Windows PowerShell:
 
 ```powershell
+$env:ADMIN_USERNAME = "replace-with-your-local-username"
 $env:ADMIN_PASSWORD = "replace-with-your-local-password"
 ```
 
@@ -87,7 +89,7 @@ If you need to create or reset the admin user later, run:
 python app/reset_admin.py
 ```
 
-The reset script reads `ADMIN_USERNAME` and `ADMIN_PASSWORD` from environment variables. `ADMIN_PASSWORD` is required.
+The reset script reads `ADMIN_USERNAME` and `ADMIN_PASSWORD` from environment variables. Both values are required.
 
 ## Security Note
 

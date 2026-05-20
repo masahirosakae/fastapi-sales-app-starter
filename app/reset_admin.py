@@ -16,8 +16,11 @@ CREATE TABLE IF NOT EXISTS users (
 )
 """)
 
-username = os.getenv("ADMIN_USERNAME", "admin")
+username = os.getenv("ADMIN_USERNAME")
 password = os.getenv("ADMIN_PASSWORD")
+
+if not username:
+    raise SystemExit("ADMIN_USERNAME is required.")
 
 if not password:
     raise SystemExit("ADMIN_PASSWORD is required.")
