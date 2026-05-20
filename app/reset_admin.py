@@ -1,4 +1,3 @@
-from getpass import getpass
 import os
 import sqlite3
 
@@ -17,17 +16,11 @@ CREATE TABLE IF NOT EXISTS users (
 )
 """)
 
-username = os.getenv("ADMIN_USER", "admin")
+username = os.getenv("ADMIN_USERNAME", "admin")
 password = os.getenv("ADMIN_PASSWORD")
 
 if not password:
-    password = getpass("New admin password: ")
-    confirm = getpass("Confirm admin password: ")
-    if password != confirm:
-        raise SystemExit("Passwords do not match.")
-
-if not password:
-    raise SystemExit("Admin password is required.")
+    raise SystemExit("ADMIN_PASSWORD is required.")
 
 pw = hasher.hash(password)
 

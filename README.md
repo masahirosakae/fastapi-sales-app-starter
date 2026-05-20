@@ -87,7 +87,7 @@ If you need to create or reset the admin user later, run:
 python app/reset_admin.py
 ```
 
-The reset script reads `ADMIN_USER` and `ADMIN_PASSWORD` from environment variables. If `ADMIN_PASSWORD` is not set, it prompts for the password interactively.
+The reset script reads `ADMIN_USERNAME` and `ADMIN_PASSWORD` from environment variables. `ADMIN_PASSWORD` is required.
 
 ## Security Note
 
