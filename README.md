@@ -1,4 +1,8 @@
 # 顧客・キャスト売上管理（FastAPI版）
+
+## 目的
+このリポジトリは、将来のAIワークフローおよび産業システム統合プロジェクトに向けたバックエンド/API設計の基礎を学ぶ一環として作成します。
+
 ## セットアップ
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
